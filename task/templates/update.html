@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Task</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        form {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"],
+        textarea,
+        input[type="date"],
+        button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        textarea {
+            height: 100px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #successMessage {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        #returnButton {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        #returnButton:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h1>Update Task</h1>
+    <form id="updateForm" method="POST">
+        <label for="name">Name:</label><br>
+        <input type="text" id="name" name="name" value="{{ task.name }}" required><br><br>
+        
+        <label for="description">Description:</label><br>
+        <textarea id="description" name="description" rows="4" cols="50" required>{{ task.description }}</textarea><br><br>
+        
+        <label for="due_date">Due Date:</label><br>
+        <input type="date" id="due_date" name="due_date" value="{{ task.due_date }}" required><br><br>
+        
+        <button type="submit">Save</button>
+    </form>
+
+    <div id="successMessage">
+        <p>Task updated successfully!</p>
+        <button id="returnButton">Return to Tasks</button>
+    </div>
+
+    <script>
+        document.getElementById("updateForm").addEventListener("submit", function(event) {
+            event.preventDefault(); // Prevent the default form submission
+            
+            // Serialize form data
+            var formData = new FormData(this);
+            
+            // Send a POST request to update the task data
+            fetch("/data/{{ task.id }}/update", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Failed to update task");
+                }
+                document.getElementById("updateForm").style.display = "none"; // Hide the form
+                document.getElementById("successMessage").style.display = "block"; // Show success message
+            })
+            .catch(error => {
+                console.error("Error updating task:", error);
+            });
+        });
+
+        document.getElementById("returnButton").addEventListener("click", function() {
+            window.location.href = "/tasks"; // Redirect to the main tasks page
+        });
+    </script>
+</body>
+</html>
